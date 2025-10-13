@@ -27,6 +27,8 @@ A simple Go web server application for testing BuildConfig with Git LFS.
 
 ### Running the Web Server
 
+#### Option 1: Run Locally with Go
+
 1. **Using Go directly:**
    ```bash
    go run .
@@ -40,13 +42,39 @@ A simple Go web server application for testing BuildConfig with Git LFS.
 3. **Building the application:**
    ```bash
    make build
-   ./buildconfig-server
+   ./bin/buildconfig-server
    ```
 
 4. **Development mode:**
    ```bash
    make dev
    ```
+
+#### Option 2: Run with Docker
+
+1. **Using Docker directly:**
+   ```bash
+   # Build the Docker image
+   docker build -t buildconfig-server .
+   
+   # Run the container
+   docker run -d --name buildconfig-server -p 8080:8080 buildconfig-server
+   ```
+
+2. **Using Make commands:**
+   ```bash
+   # Build and run with Docker
+   make docker-build
+   make docker-run
+   
+   # View logs
+   make docker-logs
+   
+   # Stop and clean up
+   make docker-stop
+   make docker-clean
+   ```
+
 
 ### Testing the API
 
@@ -67,6 +95,7 @@ Once the server is running, you can:
 
 ### Available Make Commands
 
+#### Local Development
 - `make run` - Run the web server
 - `make dev` - Run in development mode
 - `make build` - Build the application
@@ -75,12 +104,22 @@ Once the server is running, you can:
 - `make test-endpoints` - Test all API endpoints
 - `make deps` - Install dependencies
 
+#### Docker Commands
+- `make docker-build` - Build Docker image
+- `make docker-run` - Run Docker container
+- `make docker-stop` - Stop Docker container
+- `make docker-clean` - Clean Docker resources
+- `make docker-logs` - View Docker container logs
+- `make test-docker-endpoints` - Test Docker container endpoints
+
+
 ## Project Structure
 
 - `main.go` - Web server entry point and route definitions
 - `utils.go` - HTTP handlers and utility functions
 - `go.mod` - Go module definition
 - `Makefile` - Build automation and testing
+- `Dockerfile` - Docker image configuration
 
 ## Example API Responses
 
