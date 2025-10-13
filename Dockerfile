@@ -15,7 +15,7 @@ RUN microdnf install -y wget ca-certificates && \
     microdnf clean all
 
 # Create non-root user
-RUN useradd -r -u 1001 -g root -m -d /app appuser
+# RUN useradd -r -u 1001 -g root -m -d /app appuser
 
 WORKDIR /app
 COPY --from=builder /app/buildconfig-server .
