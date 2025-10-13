@@ -1,6 +1,6 @@
-FROM registry.access.redhat.com/ubi8/go-toolset:1.24 AS builder
+FROM registry.access.redhat.com/ubi8/go-toolset:latest AS builder
 WORKDIR /app
-COPY go.mod go.sum ./
+COPY  --chown=1001:0 go.mod go.sum ./ 
 RUN go mod download
 COPY . .
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o buildconfig-server .
@@ -8,7 +8,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o buildconfig-serve
 
 
 # Final stage
-FROM registry.access.redhat.com/ubi8/ubi-minimal:8.10
+FROM registry.access.redhat.com/ubi8/ubi-minimal
 
 # Install wget for health checks
 RUN microdnf install -y wget ca-certificates && \
