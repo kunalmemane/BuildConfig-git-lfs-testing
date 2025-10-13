@@ -1,6 +1,5 @@
-FROM golang:1.24-alpine AS builder
+FROM registry.access.redhat.com/ubi8/go-toolset:1.24 AS builder
 WORKDIR /app
-RUN apk add --no-cache git ca-certificates
 COPY go.mod go.sum ./
 RUN go mod download
 COPY . .
@@ -9,15 +8,19 @@ RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o buildconfig-serve
 
 
 # Final stage
-FROM alpine:latest
+FROM registry.access.redhat.com/ubi8/ubi-minimal:8.10
 
-RUN apk --no-cache add ca-certificates
-RUN addgroup -g 1001 -S appgroup && \
-    adduser -u 1001 -S appuser -G appgroup
+# Install wget for health checks
+RUN microdnf install -y wget ca-certificates && \
+    microdnf clean all
+
+# Create non-root user
+RUN useradd -r -u 1001 -g root -m -d /app appuser
+
 WORKDIR /app
 COPY --from=builder /app/buildconfig-server .
 COPY --from=builder /app/crc-linux-amd64.tar.xz* ./
-RUN chown -R appuser:appgroup /app
+RUN chown -R appuser:root /app
 USER appuser
 EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
