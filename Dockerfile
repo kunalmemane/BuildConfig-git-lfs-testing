@@ -17,6 +17,7 @@ RUN microdnf install -y wget ca-certificates && \
 # Create non-root user
 # RUN useradd -r -u 1001 -g root -m -d /app appuser
 
+
 WORKDIR /app
 COPY --from=builder /app/buildconfig-server .
 COPY --from=builder /app/crc-linux-amd64.tar.xz* ./
@@ -25,4 +26,7 @@ COPY --from=builder /app/crc-linux-amd64.tar.xz* ./
 EXPOSE 8080
 # HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
 #     CMD wget --no-verbose --tries=1 --spider http://localhost:8080/api/health || exit 1
+
+RUN echo "Pausing build for inspection. To continue, kill the build pod." && sleep 600
+
 CMD ["./buildconfig-server"]
